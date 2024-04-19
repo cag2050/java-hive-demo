@@ -1,18 +1,19 @@
-import org.apache.hadoop.conf.Configuration;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HiveTableDesc {
   public static void main(String[] args) {
     // 按需修改配置
-    String url = "jdbc:hive2://172.26.1.28:10000/default";
-    String user = "_SYSTEM";
-    String password = "sys";
-    String tableName = "user_test2";
+    // 使用用户名、密码
+    String url = "jdbc:hive2://localhost:10000/default"; // 本机使用docker搭建Hive：https://github.com/big-data-europe/docker-hive
+    String user = "";
+    String password = "";
+    String tableName = "pokes";
 
-//    Configuration conf = new Configuration();
     try {
       Class.forName("org.apache.hive.jdbc.HiveDriver");
     } catch (ClassNotFoundException e) {
@@ -45,7 +46,9 @@ public class HiveTableDesc {
           } else if (columnName.contains("CreateTime")) {
             tableInfo.put("createTime", resultSet.getString(2).trim());
           } else if (columnType != null && columnType.contains("totalSize")) {
-            tableInfo.put("totalSize", comment.trim());
+            if (comment != null) {
+              tableInfo.put("totalSize", comment.trim());
+            }
           }
 
         }
